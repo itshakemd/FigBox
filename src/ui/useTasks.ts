@@ -14,5 +14,13 @@ export function useTasks() {
     setTasks(prev => { const next = [...prev, task]; saveTasks(next); return next; });
   }, [saveTasks]);
 
-  return { tasks, addTask, saveTasks, setTasks };
+  const toggleTask = useCallback((id: string) => {
+    setTasks(prev => { const next = prev.map(t => t.id === id ? { ...t, done: !t.done } : t); saveTasks(next); return next; });
+  }, [saveTasks]);
+
+  const deleteTask = useCallback((id: string) => {
+    setTasks(prev => { const next = prev.filter(t => t.id !== id); saveTasks(next); return next; });
+  }, [saveTasks]);
+
+  return { tasks, addTask, toggleTask, deleteTask, saveTasks, setTasks };
 }

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 interface Task { id: string; text: string; done: boolean; }
-interface Props { tasks: Task[]; onAddTask: (text: string) => void; onBack: () => void; }
-export default function TasksView({ tasks, onAddTask, onBack }: Props) {
+interface Props { tasks: Task[]; onAddTask: (text: string) => void; onToggleTask: (id: string) => void; onDeleteTask: (id: string) => void; onBack: () => void; }
+export default function TasksView({ tasks, onAddTask, onToggleTask, onDeleteTask, onBack }: Props) {
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (inputValue.trim()) { onAddTask(inputValue.trim()); setInputValue(""); } };
@@ -19,7 +19,9 @@ export default function TasksView({ tasks, onAddTask, onBack }: Props) {
       <div className="task-list">
         {tasks.map(task => (
           <div key={task.id} className="task-row">
-            <span className="task-label">{task.text}</span>
+            <input type="checkbox" className="task-checkbox" checked={task.done} onChange={() => onToggleTask(task.id)} aria-label={'Mark ' + task.text + ' as done'} />
+            <span className={'task-label' + (task.done ? ' done' : '')}>{task.text}</span>
+            <button className="task-delete" onClick={() => onDeleteTask(task.id)} aria-label={'Delete ' + task.text} title="Delete">Delete</button>
           </div>
         ))}
       </div>
