@@ -18,7 +18,7 @@ function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
 }
 
 export default function App() {
-  const { activeView, notes, applyView } = useApp();
+  const { activeView, notes, activeNoteId, addNote, openNote, showNoteList, updateNoteText, applyView } = useApp();
 
   const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
 
@@ -27,7 +27,7 @@ export default function App() {
       case "apps": return <AppGrid onTimerLaunch={() => applyView("timer")} onTasksLaunch={() => applyView("tasks")} onNoteLaunch={() => applyView("note")} onLinksLaunch={() => applyView("links")} onReminderLaunch={() => applyView("reminders")} onTagsLaunch={() => applyView("tags")} />;
       case "timer": return <Placeholder title="Timer" onBack={() => applyView("apps")} />;
       case "tasks": return <Placeholder title="Tasks" onBack={() => applyView("apps")} />;
-      case "note": return <NotesView notes={notes} onBack={() => applyView("apps")} />;
+      case "note": return <NotesView notes={notes} activeNoteId={activeNoteId} onOpenNote={openNote} onShowList={showNoteList} onAddNote={addNote} onUpdateNote={updateNoteText} onBack={() => applyView("apps")} />;
       case "links": return <Placeholder title="Links" onBack={() => applyView("apps")} />;
       case "tags": return <Placeholder title="Tags" onBack={() => applyView("apps")} />;
       case "reminders": return <Placeholder title="Reminders" onBack={() => applyView("apps")} />;
