@@ -1,0 +1,24 @@
+{
+  "name": "fg+",
+  "version": "1.0.0",
+  "description": "Figma plugin created with esbuild",
+  "scripts": {
+    "build": "vite build && node build_ui.js && tsc --noEmit && esbuild src/plugin/code.ts --bundle --outfile=dist/code.js --format=cjs",
+    "build:ui": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.89.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
+}

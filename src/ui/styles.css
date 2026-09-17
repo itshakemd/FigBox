@@ -1,0 +1,1018 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  background: transparent; /* let the pill/panel shape show through, not a square window */
+  overflow: hidden; /* hide scrollbars for a clean toolbar look */
+  width: 100%;
+  height: 100%;
+}
+body {
+  font-family: Inter, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 6px;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  background-color: var(--figma-color-bg);
+  border: 1px solid var(--figma-color-border);
+  border-radius: 999px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+/* When the apps grid is open, swap the pill shape for a square panel */
+.toolbar.grid-mode {
+  padding: 10px 12px;
+  align-items: stretch;
+  justify-content: stretch;
+  border-radius: 14px;
+}
+/* Expanded panels use the same compact card treatment as the apps grid. */
+.toolbar.list-mode {
+  padding: 12px;
+  align-items: stretch;
+  justify-content: flex-start;
+  border-radius: 14px;
+}
+.toolbar.timer-mode {
+  padding: 12px;
+  align-items: stretch;
+  justify-content: flex-start;
+  border-radius: 14px;
+}
+.toolbar.list-mode > *,
+.toolbar.timer-mode > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+.pill-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tool-btn {
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tool-btn:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.tool-btn:active {
+  background-color: var(--figma-color-bg-pressed);
+}
+.tool-btn:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -2px;
+}
+/* "Apps" button stays visually pressed while the grid is open */
+.tool-btn.active {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-selected, var(--figma-color-icon));
+}
+/* ---- Apps grid (3x2) --------------------------------------------------- */
+.grid-view {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 6px;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.grid-btn {
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: none;
+  border-radius: 8px;
+  color: var(--figma-color-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* Icons are decorative placeholders — no click behavior wired up. */
+}
+.grid-btn:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.grid-btn:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -2px;
+}
+/* ---- Bookmarks panel ---------------------------------------------------- */
+.bookmark-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+/* ---- Shared app-header (back button + title, used by every app page:
+   timer, bookmarks, and any future ones) ---------------------------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-shrink: 0;
+  min-height: 24px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--figma-color-border);
+}
+.app-header-title {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--figma-color-text);
+}
+.add-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon);
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Non-functional placeholder on the Bookmarks page; wired up on Tasks. */
+}
+.add-btn:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.add-btn:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -2px;
+}
+.bookmark-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bookmark-list.is-empty {
+  align-items: center;
+  justify-content: center;
+}
+.bookmark-empty {
+  margin-top: 0;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+  text-align: center;
+}
+/* ---- Add-link form (Bookmarks) ------------------------------------ */
+.bookmark-add-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+.bookmark-add-input {
+  min-width: 0;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--figma-color-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: Inter, sans-serif;
+  color: var(--figma-color-text);
+  box-sizing: border-box;
+  width: 100%;
+}
+.bookmark-add-input:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -1px;
+}
+.bookmark-add-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.bookmark-add-confirm {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-success, #14ae5c);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bookmark-add-confirm:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+/* ---- Link rows (Bookmarks) ------------------------------------------ */
+.bookmark-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px;
+  border-radius: 6px;
+}
+.bookmark-row:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.bookmark-row:hover .bookmark-delete {
+  visibility: visible;
+}
+.bookmark-link-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+  border-radius: 6px;
+  color: var(--figma-color-text);
+  font-family: Inter, sans-serif;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+}
+.bookmark-link-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+}
+.bookmark-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bookmark-delete {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+  cursor: pointer;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.bookmark-delete:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-danger, #f24822);
+}
+/* ---- Tasks panel -------------------------------------------------- */
+.tasks-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.task-add-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+.task-add-input {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--figma-color-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: Inter, sans-serif;
+  color: var(--figma-color-text);
+}
+.task-add-input:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -1px;
+}
+.task-add-confirm {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-success, #14ae5c);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.task-add-confirm:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.task-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  border-radius: 6px;
+}
+.task-row:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.task-row:hover .task-delete {
+  visibility: visible;
+}
+.task-checkbox {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  accent-color: var(--figma-color-bg-brand, #18a0fb);
+  cursor: pointer;
+}
+.task-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--figma-color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-label.done {
+  text-decoration: line-through;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.task-delete {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+  cursor: pointer;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.task-delete:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-danger, #f24822);
+}
+.task-empty {
+  margin-top: 0;
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+/* ---- Timer view --------------------------------------------------- */
+.timer-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.timer-view .app-header {
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 0;
+}
+.back-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.back-btn:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -2px;
+}
+/* Lets the Apps button double as a running-timer indicator once the
+   panel has been minimized back to the pill. */
+.pill-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.pill-view .tool-btn {
+  width: 36px;
+  height: 36px;
+}
+.tool-btn.timer-active,
+.tool-btn.timer-paused {
+  position: relative;
+}
+.tool-btn.timer-active::after,
+.tool-btn.timer-paused::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--figma-color-bg);
+}
+.tool-btn.timer-active::after {
+  background-color: var(--figma-color-icon-success, #14ae5c);
+}
+.tool-btn.timer-paused::after {
+  background-color: var(--figma-color-icon-warning, #a8720a);
+}
+.timer-display {
+  margin-top: auto;
+  font-size: 34px;
+  font-weight: 700;
+  font-family: Inter, sans-serif;
+  color: var(--figma-color-text);
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: auto;
+}
+.timer-btn {
+  background: transparent;
+  border: 1px solid var(--figma-color-border);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.timer-btn:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.timer-btn:active {
+  background-color: var(--figma-color-bg-pressed);
+}
+.timer-btn:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -2px;
+}
+/* ---- Note view ------------------------------------------------------ */
+.note-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.note-list-view,
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.note-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.note-list.is-empty {
+  align-items: center;
+  justify-content: center;
+}
+.note-empty {
+  padding: 8px 12px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.note-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 8px;
+  border: 1px solid var(--figma-color-border);
+  border-radius: 9px;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  cursor: pointer;
+  outline: none;
+}
+.note-item:hover,
+.note-item:focus-visible {
+  background-color: var(--figma-color-bg-hover);
+  border-color: var(--figma-color-border-strong, var(--figma-color-border));
+}
+.note-item-copy {
+  flex: 1;
+  min-width: 0;
+}
+.note-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--figma-color-text);
+}
+.note-item-preview {
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.note-item-date {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 1px;
+  font-size: 10px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.note-item-board,
+.note-item-delete,
+.note-delete {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0;
+}
+.note-item:hover .note-item-board,
+.note-item:focus-within .note-item-board,
+.note-item:hover .note-item-delete,
+.note-item:focus-within .note-item-delete,
+.note-delete {
+  opacity: 1;
+}
+.note-item-board:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon);
+}
+.note-item-delete:hover,
+.note-delete:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-danger, #f24822);
+}
+.note-title-input {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--figma-color-text);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+}
+.note-title-input::placeholder {
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.note-textarea {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  resize: none;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 6px 2px 2px;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--figma-color-text);
+}
+.note-textarea::placeholder {
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+/* ---- Tags view ------------------------------------------------------ */
+.tags-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.tag-add-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+.tag-add-input {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--figma-color-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: Inter, sans-serif;
+  color: var(--figma-color-text);
+}
+.tag-add-input:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -1px;
+}
+.tag-add-confirm {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-success, #14ae5c);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tag-add-confirm:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.tag-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tag-list.is-empty {
+  align-items: center;
+  justify-content: center;
+}
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  border-radius: 6px;
+}
+.tag-row:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.tag-row:hover .tag-delete {
+  visibility: visible;
+}
+.tag-link-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+  border-radius: 6px;
+  color: var(--figma-color-text);
+  font-family: Inter, sans-serif;
+  cursor: pointer;
+  text-align: left;
+}
+.tag-link-btn:hover {
+  color: var(--figma-color-text, inherit);
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.04));
+}
+.tag-link-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+}
+.tag-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag-delete {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+  cursor: pointer;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.tag-delete:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-danger, #f24822);
+}
+.tag-empty {
+  margin-top: 0;
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+/* ---- Reminders view --------------------------------------------------- */
+.reminders-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.reminder-add-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+.reminder-add-input {
+  min-width: 0;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--figma-color-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-family: Inter, sans-serif;
+  color: var(--figma-color-text);
+  box-sizing: border-box;
+  width: 100%;
+}
+.reminder-add-input:focus-visible {
+  outline: 2px solid var(--figma-color-border-selected);
+  outline-offset: -1px;
+}
+.reminder-duration-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.duration-chip {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.duration-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.duration-chip span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 999px;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--figma-color-border);
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+  transition: all 0.12s ease;
+  user-select: none;
+}
+.duration-chip input:checked + span {
+  background-color: var(--figma-color-bg-brand, #18a0fb);
+  border-color: var(--figma-color-bg-brand, #18a0fb);
+  color: #fff;
+}
+.duration-chip:hover span {
+  border-color: var(--figma-color-border-strong, var(--figma-color-border));
+}
+.reminder-add-confirm {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-success, #14ae5c);
+  cursor: pointer;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.reminder-add-confirm:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.reminder-list {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.reminder-list.is-empty {
+  align-items: center;
+  justify-content: center;
+}
+.reminder-empty {
+  margin-top: 0;
+  padding: 8px 12px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 11px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.reminder-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 4px 6px 6px;
+  border-radius: 8px;
+}
+.reminder-row:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+.reminder-row:hover .reminder-delete {
+  visibility: visible;
+}
+.reminder-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 2px;
+  cursor: default;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  width: 100%;
+}
+.reminder-left-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.reminder-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--figma-color-icon-danger, #f24822);
+}
+.reminder-texts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+  flex: 1;
+}
+.reminder-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--figma-color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reminder-meta {
+  font-size: 10px;
+  color: var(--figma-color-text-secondary, var(--figma-color-icon));
+}
+.reminder-countdown {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+  color: var(--figma-color-text-warning, #a8720a);
+  padding: 2px 8px;
+  background-color: var(--figma-color-bg-secondary, rgba(255, 255, 255, 0.06));
+  border-radius: 6px;
+}
+.reminder-bar {
+  margin-left: 2px;
+  margin-right: 2px;
+  height: 3px;
+  border-radius: 999px;
+  background-color: var(--figma-color-border);
+  overflow: hidden;
+  position: relative;
+}
+.reminder-bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--figma-color-icon-success, #14ae5c) 0%,
+    var(--figma-color-icon-warning, #a8720a) 60%,
+    var(--figma-color-icon-danger, #f24822) 100%
+  );
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.reminder-delete {
+  position: absolute;
+  visibility: hidden;
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--figma-color-icon-secondary, var(--figma-color-icon));
+  cursor: pointer;
+  flex-shrink: 0;
+  transform: translate(2px, -4px);
+}
+.reminder-row {
+  position: relative;
+}
+.reminder-delete:hover {
+  background-color: var(--figma-color-bg-pressed);
+  color: var(--figma-color-icon-danger, #f24822);
+}
+[hidden] {
+  display: none !important;
+}
