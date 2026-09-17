@@ -4,6 +4,7 @@ import AppGrid from "./components/AppGrid";
 import TimerView from "./components/TimerView";
 import NotesView from "./components/NotesView";
 import TasksView from "./components/TasksView";
+import LinksView from "./components/LinksView";
 
 const appsIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/></svg>
@@ -20,7 +21,7 @@ function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
 }
 
 export default function App() {
-  const { activeView, notes, activeNoteId, tasks, timerSeconds, timerRunning, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning } = useApp();
+  const { activeView, bookmarks, notes, activeNoteId, tasks, timerSeconds, timerRunning, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning } = useApp();
 
   const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
 
@@ -30,7 +31,7 @@ export default function App() {
       case "timer": return <TimerView timerSeconds={timerSeconds} timerRunning={timerRunning} onToggle={() => { if (timerRunning) pauseTimer(); else startTimer(); }} onReset={resetTimer} onBack={() => applyView("apps")} />;
       case "tasks": return <TasksView tasks={tasks} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} onBack={() => applyView("apps")} />;
       case "note": return <NotesView notes={notes} activeNoteId={activeNoteId} onOpenNote={openNote} onShowList={showNoteList} onAddNote={addNote} onDeleteNote={deleteNote} onUpdateNote={updateNoteText} onBack={() => applyView("apps")} />;
-      case "links": return <Placeholder title="Links" onBack={() => applyView("apps")} />;
+      case "links": return <LinksView bookmarks={bookmarks} onDeleteBookmark={deleteBookmark} onBack={() => applyView("apps")} />;
       case "tags": return <Placeholder title="Tags" onBack={() => applyView("apps")} />;
       case "reminders": return <Placeholder title="Reminders" onBack={() => applyView("apps")} />;
       case "pill": return <div className="pill-view"><button className="tool-btn" onClick={() => applyView("apps")} aria-label="Apps" title="Apps">{appsIcon}</button></div>;

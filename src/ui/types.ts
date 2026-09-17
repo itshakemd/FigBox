@@ -1,3 +1,9 @@
+export interface Bookmark {
+  id: string;
+  url: string;
+  label: string;
+}
+
 export interface Note {
   id: string;
   title: string;
