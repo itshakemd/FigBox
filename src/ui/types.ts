@@ -1,1 +1,1 @@
-export type View = 'pill' | 'apps';
+export type View = 'pill' | 'apps' | 'links' | 'timer' | 'tasks' | 'note' | 'tags' | 'reminders';
