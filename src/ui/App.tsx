@@ -1,6 +1,7 @@
 import React from "react";
 import useApp from "./useApp";
 import AppGrid from "./components/AppGrid";
+import TimerView from "./components/TimerView";
 import NotesView from "./components/NotesView";
 import TasksView from "./components/TasksView";
 
@@ -19,14 +20,14 @@ function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
 }
 
 export default function App() {
-  const { activeView, notes, activeNoteId, tasks, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView } = useApp();
+  const { activeView, notes, activeNoteId, tasks, timerSeconds, timerRunning, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView, startTimer, pauseTimer, resetTimer } = useApp();
 
   const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
 
   const renderView = () => {
     switch (activeView) {
       case "apps": return <AppGrid onTimerLaunch={() => applyView("timer")} onTasksLaunch={() => applyView("tasks")} onNoteLaunch={() => applyView("note")} onLinksLaunch={() => applyView("links")} onReminderLaunch={() => applyView("reminders")} onTagsLaunch={() => applyView("tags")} />;
-      case "timer": return <Placeholder title="Timer" onBack={() => applyView("apps")} />;
+      case "timer": return <TimerView timerSeconds={timerSeconds} timerRunning={timerRunning} onToggle={() => { if (timerRunning) pauseTimer(); else startTimer(); }} onReset={resetTimer} onBack={() => applyView("apps")} />;
       case "tasks": return <TasksView tasks={tasks} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} onBack={() => applyView("apps")} />;
       case "note": return <NotesView notes={notes} activeNoteId={activeNoteId} onOpenNote={openNote} onShowList={showNoteList} onAddNote={addNote} onDeleteNote={deleteNote} onUpdateNote={updateNoteText} onBack={() => applyView("apps")} />;
       case "links": return <Placeholder title="Links" onBack={() => applyView("apps")} />;

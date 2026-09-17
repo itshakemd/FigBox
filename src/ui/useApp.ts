@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import type { View } from "./types";
+import { useTimer } from "./useTimer";
 import { useNotes } from "./useNotes";
 import { useTasks } from "./useTasks";
 import { getViewSize, normalizeNotes } from "./utils";
 
 export default function useApp() {
   const [activeView, setActiveView] = useState<View>("pill");
+  const timer = useTimer();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
 
@@ -27,5 +29,11 @@ export default function useApp() {
     return () => window.removeEventListener("message", handler);
   }, [setNotes, setTasks]);
 
-  return { activeView, notes, activeNoteId, tasks, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView };
+  return {
+    activeView, notes, activeNoteId, tasks,
+    timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
+    addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView,
+    startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,
+    setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning,
+  };
 }
