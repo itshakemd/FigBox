@@ -1,9 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { View } from "./types";
-import { getViewSize } from "./utils";
+import { useNotes } from "./useNotes";
+import { getViewSize, normalizeNotes } from "./utils";
 
 export default function useApp() {
   const [activeView, setActiveView] = useState<View>("pill");
+  const { notes, setNotes } = useNotes();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -11,5 +13,14 @@ export default function useApp() {
     parent.postMessage({ pluginMessage: { type: "resize", width: size.width, height: size.height } }, "*");
   }, []);
 
-  return { activeView, applyView };
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      const msg = event.data?.pluginMessage; if (!msg) return;
+      if (msg.type === "note-init") setNotes(normalizeNotes(msg.notes ?? msg.note));
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [setNotes]);
+
+  return { activeView, notes, applyView };
 }
