@@ -5,4 +5,10 @@ export interface Note {
   updatedAt: number;
 }
 
+export interface Task {
+  id: string;
+  text: string;
+  done: boolean;
+}
+
 export type View = 'pill' | 'apps' | 'links' | 'timer' | 'tasks' | 'note' | 'tags' | 'reminders';

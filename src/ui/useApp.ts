@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import type { View } from "./types";
 import { useNotes } from "./useNotes";
+import { useTasks } from "./useTasks";
 import { getViewSize, normalizeNotes } from "./utils";
 
 export default function useApp() {
   const [activeView, setActiveView] = useState<View>("pill");
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
+  const { tasks, setTasks } = useTasks();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -16,11 +18,14 @@ export default function useApp() {
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       const msg = event.data?.pluginMessage; if (!msg) return;
-      if (msg.type === "note-init") setNotes(normalizeNotes(msg.notes ?? msg.note));
+      switch (msg.type) {
+        case "tasks-init": setTasks(msg.tasks || []); break;
+        case "note-init": setNotes(normalizeNotes(msg.notes ?? msg.note)); break;
+      }
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes]);
+  }, [setNotes, setTasks]);
 
-  return { activeView, notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, applyView };
+  return { activeView, notes, activeNoteId, tasks, addNote, deleteNote, openNote, showNoteList, updateNoteText, applyView };
 }
