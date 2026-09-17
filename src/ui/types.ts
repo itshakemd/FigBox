@@ -1,1 +1,1 @@
-export type View = 'pill';
+export type View = 'pill' | 'apps';

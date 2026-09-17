@@ -9,12 +9,21 @@ const tagIcon = (
 );
 
 export default function App() {
-  const { activeView } = useApp();
-  if (activeView !== "pill") return null;
+  const { activeView, applyView } = useApp();
+  if (activeView === "apps") {
+    return (
+      <div className="toolbar grid-mode" id="toolbar">
+        <div>
+          <button className="back-btn" onClick={() => applyView("pill")} aria-label="Back" title="Back">Back</button>
+          <span>Apps</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="toolbar" id="toolbar">
       <div className="pill-view">
-        <button className="tool-btn" aria-label="Apps" title="Apps">{appsIcon}</button>
+        <button className="tool-btn" onClick={() => applyView("apps")} aria-label="Apps" title="Apps">{appsIcon}</button>
         <button className="tool-btn" aria-label="Tags" title="Tags">{tagIcon}</button>
       </div>
     </div>

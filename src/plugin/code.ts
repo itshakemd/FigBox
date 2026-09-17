@@ -33,3 +33,11 @@ figma.showUI(uiHtml, {
   themeColors: true,
   position: initialPosition,
 });
+
+figma.ui.onmessage = (msg) => {
+  if (msg.type === "resize") {
+    uiWidth = msg.width;
+    uiHeight = msg.height;
+    figma.ui.resize(uiWidth, uiHeight);
+  }
+};
