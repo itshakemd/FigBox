@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 interface Note { id: string; title: string; text: string; updatedAt: number; }
-interface Props { notes: Note[]; activeNoteId: string | null; onOpenNote: (id: string) => void; onShowList: () => void; onAddNote: () => void; onUpdateNote: (title: string, text: string) => void; onBack: () => void; }
-export default function NotesView({ notes, activeNoteId, onOpenNote, onShowList, onAddNote, onUpdateNote, onBack }: Props) {
+interface Props { notes: Note[]; activeNoteId: string | null; onOpenNote: (id: string) => void; onShowList: () => void; onAddNote: () => void; onDeleteNote: (id: string) => void; onUpdateNote: (title: string, text: string) => void; onBack: () => void; }
+export default function NotesView({ notes, activeNoteId, onOpenNote, onShowList, onAddNote, onDeleteNote, onUpdateNote, onBack }: Props) {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const textareaRef = useRef(null);
@@ -16,6 +16,7 @@ export default function NotesView({ notes, activeNoteId, onOpenNote, onShowList,
         <div>
           <button className="back-btn" onClick={onShowList} aria-label="Back to notes" title="Back to notes">Back</button>
           <input className="note-title-input" type="text" maxLength={80} placeholder="Note title" aria-label="Note title" value={title} onChange={handleTitleChange} />
+          <button className="note-delete" onClick={() => { if (activeNoteId) onDeleteNote(activeNoteId); }} aria-label="Delete note" title="Delete note">Delete</button>
         </div>
         <textarea className="note-textarea" ref={textareaRef} placeholder="Write your note..." maxLength={10000} value={text} onChange={handleTextChange} />
       </div>
@@ -32,6 +33,7 @@ export default function NotesView({ notes, activeNoteId, onOpenNote, onShowList,
         {notes.map(note => (
           <div key={note.id} className="note-item" tabIndex={0} role="button" aria-label={"Open " + note.title} onClick={() => onOpenNote(note.id)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpenNote(note.id); } }}>
             <div className="note-item-copy"><div className="note-item-title">{note.title}</div></div>
+            <button className="note-item-delete" onClick={(e) => { e.stopPropagation(); onDeleteNote(note.id); }} aria-label={"Delete " + note.title} title="Delete note">Delete</button>
           </div>
         ))}
       </div>

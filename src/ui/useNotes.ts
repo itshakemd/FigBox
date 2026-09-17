@@ -31,6 +31,10 @@ export function useNotes() {
     setActiveNoteId(note.id);
   }, [saveNotes]);
 
+  const deleteNote = useCallback((id: string) => {
+    setNotes(prev => { const next = prev.filter(n => n.id !== id); if (activeNoteId === id) setActiveNoteId(null); saveNotes(next); return next; });
+  }, [activeNoteId, saveNotes]);
+
   const updateNoteText = useCallback((title: string, text: string) => {
     setNotes(prev => prev.map(n => n.id === activeNoteId ? { ...n, title, text, updatedAt: Date.now() } : n));
     if (noteSaveTimer !== null) clearTimeout(noteSaveTimer);
@@ -38,5 +42,5 @@ export function useNotes() {
     setNoteSaveTimer(id);
   }, [activeNoteId, noteSaveTimer, notes, saveNotes]);
 
-  return { notes, activeNoteId, addNote, openNote, showNoteList, updateNoteText, saveNotes, setNotes };
+  return { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, saveNotes, setNotes };
 }

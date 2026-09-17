@@ -5,7 +5,7 @@ import { getViewSize, normalizeNotes } from "./utils";
 
 export default function useApp() {
   const [activeView, setActiveView] = useState<View>("pill");
-  const { notes, activeNoteId, addNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
+  const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -22,5 +22,5 @@ export default function useApp() {
     return () => window.removeEventListener("message", handler);
   }, [setNotes]);
 
-  return { activeView, notes, activeNoteId, addNote, openNote, showNoteList, updateNoteText, applyView };
+  return { activeView, notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, applyView };
 }
