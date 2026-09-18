@@ -13,7 +13,7 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
-  const { reminders, reminderNow, addReminder, triggerReminder, ensureTickLoop, setReminders } = useReminders();
+  const { reminders, reminderNow, addReminder, cancelReminder, triggerReminder, ensureTickLoop, removeReminderById, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -39,12 +39,12 @@ export default function useApp() {
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes, setTasks, setBookmarks, setReminders, triggerReminder, ensureTickLoop]);
+  }, [setNotes, setTasks, setBookmarks, setReminders, triggerReminder, ensureTickLoop, removeReminderById]);
 
   return {
     activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow,
     timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
-    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, applyView,
+    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, cancelReminder, applyView,
     startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,
     setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning, ensureTickLoopIfAny,
   };

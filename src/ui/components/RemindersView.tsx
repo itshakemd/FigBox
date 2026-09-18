@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 interface Reminder { id: string; title: string; durationMin: number; dueAt: number; }
-interface Props { reminders: Reminder[]; now: number; onAddReminder: (title: string, durationMin: number) => void; onBack: () => void; }
+interface Props { reminders: Reminder[]; now: number; onAddReminder: (title: string, durationMin: number) => void; onCancelReminder: (id: string) => void; onBack: () => void; }
 function formatRemain(secondsLeft: number): string { if (secondsLeft < 0) secondsLeft = 0; const m = Math.floor(secondsLeft / 60).toString().padStart(2, "0"); const s = (secondsLeft % 60).toString().padStart(2, "0"); return m + ":" + s; }
-export default function RemindersView({ reminders, now, onAddReminder, onBack }: Props) {
+export default function RemindersView({ reminders, now, onAddReminder, onCancelReminder, onBack }: Props) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("10");
   const titleRef = useRef<HTMLInputElement>(null);
@@ -33,6 +33,7 @@ export default function RemindersView({ reminders, now, onAddReminder, onBack }:
               <span className="reminder-title">{r.title}</span>
               <span className="reminder-countdown">{formatRemain(remain)}</span>
               <div className="reminder-bar"><div className="reminder-bar-fill" style={{width: progress * 100 + "%"}} /></div>
+              <button className="reminder-delete" onClick={() => onCancelReminder(r.id)} aria-label={"Cancel reminder " + r.title} title="Cancel">Cancel</button>
             </div>
           );
         })}

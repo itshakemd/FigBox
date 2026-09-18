@@ -22,7 +22,7 @@ function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
 }
 
 export default function App() {
-  const { activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow, timerSeconds, timerRunning, addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning, ensureTickLoopIfAny } = useApp();
+  const { activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow, timerSeconds, timerRunning, addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, cancelReminder, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning, ensureTickLoopIfAny } = useApp();
 
   const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
 
@@ -34,7 +34,7 @@ export default function App() {
       case "note": return <NotesView notes={notes} activeNoteId={activeNoteId} onOpenNote={openNote} onShowList={showNoteList} onAddNote={addNote} onDeleteNote={deleteNote} onUpdateNote={updateNoteText} onBack={() => applyView("apps")} />;
       case "links": return <LinksView bookmarks={bookmarks} onAddBookmark={addBookmark} onDeleteBookmark={deleteBookmark} onBack={() => applyView("apps")} />;
       case "tags": return <Placeholder title="Tags" onBack={() => applyView("apps")} />;
-      case "reminders": return <RemindersView reminders={reminders} now={reminderNow} onAddReminder={addReminder} onBack={() => applyView("apps")} />;
+      case "reminders": return <RemindersView reminders={reminders} now={reminderNow} onAddReminder={addReminder} onCancelReminder={cancelReminder} onBack={() => applyView("apps")} />;
       case "pill": return <div className="pill-view"><button className="tool-btn" onClick={() => applyView("apps")} aria-label="Apps" title="Apps">{appsIcon}</button></div>;
       default: return null;
     }

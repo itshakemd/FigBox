@@ -13,6 +13,10 @@ export function useReminders() {
     parent.postMessage({ pluginMessage: { type: "reminder-trigger", id, title } }, "*");
   }, []);
 
+  const removeReminderById = useCallback((id: string) => {
+    setReminders(prev => { const next = prev.filter(r => r.id !== id); saveReminders(next); return next; });
+  }, [saveReminders]);
+
   const tickReminders = useCallback(() => {
     const now = Date.now();
     setReminderNow(now);
@@ -48,5 +52,7 @@ export function useReminders() {
     ensureTickLoop();
   }, [saveReminders, ensureTickLoop]);
 
-  return { reminders, reminderNow, addReminder, triggerReminder, ensureTickLoop, saveReminders, setReminders };
+  const cancelReminder = useCallback((id: string) => { removeReminderById(id); }, [removeReminderById]);
+
+  return { reminders, reminderNow, addReminder, cancelReminder, triggerReminder, ensureTickLoop, removeReminderById, saveReminders, setReminders };
 }
