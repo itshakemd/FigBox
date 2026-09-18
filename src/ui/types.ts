@@ -17,6 +17,12 @@ export interface Task {
   done: boolean;
 }
 
+export interface Tag {
+  id: string;
+  name: string;
+  nodeId: string | null;
+}
+
 export interface Reminder {
   id: string;
   title: string;

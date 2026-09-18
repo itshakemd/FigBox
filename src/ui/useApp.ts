@@ -4,6 +4,7 @@ import { useTimer } from "./useTimer";
 import { useBookmarks } from "./useBookmarks";
 import { useNotes } from "./useNotes";
 import { useTasks } from "./useTasks";
+import { useTags } from "./useTags";
 import { useReminders } from "./useReminders";
 import { getViewSize, normalizeNotes } from "./utils";
 
@@ -13,6 +14,7 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
+  const { tags, addTag, deleteTag, setTags } = useTags();
   const { reminders, reminderNow, addReminder, cancelReminder, triggerReminder, ensureTickLoop, removeReminderById, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
@@ -30,6 +32,7 @@ export default function useApp() {
         case "tasks-init": setTasks(msg.tasks || []); break;
         case "bookmarks-init": setBookmarks(msg.bookmarks || []); break;
         case "note-init": setNotes(normalizeNotes(msg.notes ?? msg.note)); break;
+        case "tags-init": setTags(msg.tags || []); break;
         case "reminders-init": {
           const now = Date.now(); const overdue = msg.reminders.filter((r: any) => now >= r.dueAt); const active = msg.reminders.filter((r: any) => now < r.dueAt);
           setReminders(active); overdue.forEach((r: any) => triggerReminder(r.id, r.title)); ensureTickLoop(); break;
@@ -39,12 +42,12 @@ export default function useApp() {
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes, setTasks, setBookmarks, setReminders, triggerReminder, ensureTickLoop, removeReminderById]);
+  }, [setNotes, setTasks, setBookmarks, setTags, setReminders, triggerReminder, ensureTickLoop, removeReminderById]);
 
   return {
-    activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow,
+    activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow,
     timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
-    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, cancelReminder, applyView,
+    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addTag, deleteTag, addReminder, cancelReminder, applyView,
     startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,
     setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning, ensureTickLoopIfAny,
   };
