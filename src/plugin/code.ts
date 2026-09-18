@@ -107,6 +107,11 @@ async function createCardFrame(
   return frame;
 }
 
+const TASKS_STORAGE_KEY = "fgplus-tasks";
+const BOOKMARKS_STORAGE_KEY = "fgplus-bookmarks";
+const NOTE_STORAGE_KEY = "fgplus-note";
+const TAGS_STORAGE_KEY = "fgplus-tags";
+const REMINDERS_STORAGE_KEY = "fgplus-reminders";
 const initialPosition = computePosition();
 
 figma.showUI(uiHtml, {
@@ -117,8 +122,42 @@ figma.showUI(uiHtml, {
   position: initialPosition,
 });
 
+figma.clientStorage.getAsync(TASKS_STORAGE_KEY).then((tasks) => {
+  figma.ui.postMessage({ type: "tasks-init", tasks: tasks || [] });
+});
+
+figma.clientStorage.getAsync(BOOKMARKS_STORAGE_KEY).then((bookmarks) => {
+  figma.ui.postMessage({ type: "bookmarks-init", bookmarks: bookmarks || [] });
+});
+
+figma.clientStorage.getAsync(NOTE_STORAGE_KEY).then((note) => {
+  figma.ui.postMessage({ type: "note-init", note: note || [] });
+});
+
+figma.clientStorage.getAsync(TAGS_STORAGE_KEY).then((tags) => {
+  figma.ui.postMessage({ type: "tags-init", tags: tags || [] });
+});
+
+figma.clientStorage.getAsync(REMINDERS_STORAGE_KEY).then((reminders) => {
+  figma.ui.postMessage({ type: "reminders-init", reminders: reminders || [] });
+});
 figma.ui.onmessage = (msg) => {
-  if (msg.type === "resize") {
+  if (msg.type === "timer-launch") {
+
+  } else if (msg.type === "resize") {
+    uiWidth = msg.width;
+    uiHeight = msg.height;
+    figma.ui.resize(uiWidth, uiHeight);
+  } else if (msg.type === "tasks-save") {
+    figma.clientStorage.setAsync(TASKS_STORAGE_KEY, msg.tasks);
+  } else if (msg.type === "bookmarks-save") {
+    figma.clientStorage.setAsync(BOOKMARKS_STORAGE_KEY, msg.bookmarks);
+  } else if (msg.type === "note-save") {
+    figma.clientStorage.setAsync(NOTE_STORAGE_KEY, msg.notes || msg.note || []);
+  } else if (msg.type === "tags-save") {
+    figma.clientStorage.setAsync(TAGS_STORAGE_KEY, msg.tags);
+  } else if (msg.type === "reminders-save") {
+    figma.clientStorage.setAsync(REMINDERS_STORAGE_KEY, msg.reminders);
     uiWidth = msg.width;
     uiHeight = msg.height;
     figma.ui.resize(uiWidth, uiHeight);
