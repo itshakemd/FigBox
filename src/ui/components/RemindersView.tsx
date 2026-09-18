@@ -24,8 +24,9 @@ export default function RemindersView({ reminders, now, onAddReminder, onCancelR
         </div>
         <button type="submit" className="reminder-add-confirm" aria-label="Confirm" title="Start reminder"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
       </form>
-      <div className="reminder-list">
-        {reminders.map(r => {
+      <div className={"reminder-list" + (reminders.length === 0 ? " is-empty" : "")}>
+        {reminders.length === 0 ? <div className="reminder-empty">No pending reminders</div> :
+          reminders.map(r => {
           const remain = Math.max(0, Math.ceil((r.dueAt - now) / 1000));
           const total = r.durationMin * 60;
           const progress = total > 0 ? Math.max(0, Math.min(1, 1 - remain / total)) : 0;
@@ -42,7 +43,8 @@ export default function RemindersView({ reminders, now, onAddReminder, onCancelR
               <button className="reminder-delete" onClick={() => onCancelReminder(r.id)} aria-label={"Cancel reminder " + r.title} title="Cancel"><svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg></button>
             </div>
           );
-        })}
+          })
+        }
       </div>
     </div>
   );

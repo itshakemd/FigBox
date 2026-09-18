@@ -17,13 +17,15 @@ export default function TasksView({ tasks, onAddTask, onToggleTask, onDeleteTask
         <button type="submit" className="task-add-confirm" aria-label="Confirm" title="Confirm"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
       </form>
       <div className="task-list">
-        {tasks.map(task => (
+        {tasks.length === 0 ? <div className="task-empty">No tasks yet</div> :
+          tasks.map(task => (
           <div key={task.id} className="task-row">
             <input type="checkbox" className="task-checkbox" checked={task.done} onChange={() => onToggleTask(task.id)} aria-label={'Mark ' + task.text + ' as done'} />
             <span className={'task-label' + (task.done ? ' done' : '')}>{task.text}</span>
             <button className="task-delete" onClick={() => onDeleteTask(task.id)} aria-label={'Delete ' + task.text} title="Delete"><svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg></button>
           </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   );
