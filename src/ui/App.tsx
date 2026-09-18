@@ -13,7 +13,7 @@ const appsIcon = (
 );
 
 export default function App() {
-  const { activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow, timerSeconds, timerRunning, addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addTag, deleteTag, addReminder, cancelReminder, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning, ensureTickLoopIfAny } = useApp();
+  const { activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow, timerSeconds, timerRunning, addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addTag, navigateToTag, deleteTag, addReminder, cancelReminder, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning, ensureTickLoopIfAny } = useApp();
 
   const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
 
@@ -24,7 +24,7 @@ export default function App() {
       case "tasks": return <TasksView tasks={tasks} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} onBack={() => applyView("apps")} />;
       case "note": return <NotesView notes={notes} activeNoteId={activeNoteId} onOpenNote={openNote} onShowList={showNoteList} onAddNote={addNote} onDeleteNote={deleteNote} onUpdateNote={updateNoteText} onBack={() => applyView("apps")} />;
       case "links": return <LinksView bookmarks={bookmarks} onAddBookmark={addBookmark} onDeleteBookmark={deleteBookmark} onBack={() => applyView("apps")} />;
-      case "tags": return <TagsView tags={tags} onAddTag={addTag} onDeleteTag={deleteTag} onBack={() => applyView("apps")} />;
+      case "tags": return <TagsView tags={tags} onAddTag={addTag} onNavigateToTag={navigateToTag} onDeleteTag={deleteTag} onBack={() => applyView("apps")} />;
       case "reminders": return <RemindersView reminders={reminders} now={reminderNow} onAddReminder={addReminder} onCancelReminder={cancelReminder} onBack={() => applyView("apps")} />;
       case "pill": return <div className="pill-view"><button className="tool-btn" onClick={() => applyView("apps")} aria-label="Apps" title="Apps">{appsIcon}</button></div>;
       default: return null;

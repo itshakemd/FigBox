@@ -17,9 +17,15 @@ export function useTags() {
     parent.postMessage({ pluginMessage: { type: "tag-create", id: pendingId, name: trimmed } }, "*");
   }, []);
 
-  const deleteTag = useCallback((id: string) => {
-    setTags(prev => { const next = prev.filter(t => t.id !== id); saveTags(next); return next; });
-  }, [saveTags]);
+  const navigateToTag = useCallback((id: string) => {
+    const tag = tags.find(t => t.id === id); if (!tag || !tag.nodeId) return;
+    parent.postMessage({ pluginMessage: { type: "tag-navigate", nodeId: tag.nodeId } }, "*");
+  }, [tags]);
 
-  return { tags, tagPendingId, tagPendingName, tagIdCounter, addTag, deleteTag, saveTags, setTags, setTagPendingId, setTagPendingName };
+  const deleteTag = useCallback((id: string) => {
+    const tag = tags.find(t => t.id === id); if (tag && tag.nodeId) { parent.postMessage({ pluginMessage: { type: "tag-delete-node", nodeId: tag.nodeId } }, "*"); }
+    setTags(prev => { const next = prev.filter(t => t.id !== id); saveTags(next); return next; });
+  }, [tags, saveTags]);
+
+  return { tags, tagPendingId, tagPendingName, tagIdCounter, addTag, navigateToTag, deleteTag, saveTags, setTags, setTagPendingId, setTagPendingName };
 }

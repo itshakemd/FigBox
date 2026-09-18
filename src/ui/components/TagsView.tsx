@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 interface Tag { id: string; name: string; nodeId: string | null; }
-interface Props { tags: Tag[]; onAddTag: (name: string) => void; onDeleteTag: (id: string) => void; onBack: () => void; }
-export default function TagsView({ tags, onAddTag, onDeleteTag, onBack }: Props) {
+interface Props { tags: Tag[]; onAddTag: (name: string) => void; onNavigateToTag: (id: string) => void; onDeleteTag: (id: string) => void; onBack: () => void; }
+export default function TagsView({ tags, onAddTag, onNavigateToTag, onDeleteTag, onBack }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [showForm, setShowForm] = useState(false);
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!inputValue.trim()) return; onAddTag(inputValue.trim()); setInputValue(""); setShowForm(false); };
@@ -19,8 +19,10 @@ export default function TagsView({ tags, onAddTag, onDeleteTag, onBack }: Props)
       <div className="tag-list">
         {tags.map(tag => (
           <div key={tag.id} className="tag-row">
-            <span className="tag-label">{tag.name}</span>
-            <button className="tag-delete" onClick={() => onDeleteTag(tag.id)} aria-label={"Delete tag " + tag.name} title="Delete">Delete</button>
+            <button className="tag-link-btn" type="button" onClick={() => onNavigateToTag(tag.id)} title={"Jump to " + tag.name + " on the board"}>
+              <span className="tag-label">{tag.name}</span>
+            </button>
+            <button className="tag-delete" onClick={() => onDeleteTag(tag.id)} aria-label={"Delete tag " + tag.name} title="Delete (also removes card from board)">Delete</button>
           </div>
         ))}
       </div>

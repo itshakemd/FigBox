@@ -146,7 +146,25 @@ figma.ui.onmessage = (msg) => {
       } catch (e) {
         figma.ui.postMessage({ type: "tag-create-result", id: msg.id, nodeId: null, error: String(e) });
       }
-    })();  } else if (msg.type === "reminder-trigger") {
+    })();  } else if (msg.type === "tag-navigate") {
+    const nodeId = msg.nodeId;
+    if (!nodeId) return;
+    const node = figma.getNodeById(nodeId);
+    if (node) {
+      try {
+        figma.currentPage.selection = [node as SceneNode];
+      } catch (_) {}
+      figma.viewport.scrollAndZoomIntoView([node]);
+    } else {
+      figma.ui.postMessage({ type: "tag-missing", nodeId });
+    }
+  } else if (msg.type === "tag-delete-node") {
+    const nodeId = msg.nodeId;
+    if (!nodeId) return;
+    const node = figma.getNodeById(nodeId);
+    if (node && node.parent) {
+      node.remove();
+    }  } else if (msg.type === "reminder-trigger") {
     const title = ((msg.title || "") as string).toString().trim() || "Reminder";
     const id = msg.id;
     (async () => {
