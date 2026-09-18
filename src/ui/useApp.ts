@@ -14,7 +14,7 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
-  const { tags, addTag, deleteTag, setTags } = useTags();
+  const { tags, tagPendingId, tagPendingName, tagIdCounter, addTag, deleteTag, saveTags, setTags, setTagPendingId, setTagPendingName } = useTags();
   const { reminders, reminderNow, addReminder, cancelReminder, triggerReminder, ensureTickLoop, removeReminderById, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
@@ -33,6 +33,14 @@ export default function useApp() {
         case "bookmarks-init": setBookmarks(msg.bookmarks || []); break;
         case "note-init": setNotes(normalizeNotes(msg.notes ?? msg.note)); break;
         case "tags-init": setTags(msg.tags || []); break;
+        case "tag-create-result":
+          if (msg.nodeId) {
+            tagIdCounter.current += 1;
+            const name = tagPendingName || "Untitled";
+            setTags(prev => [...prev, { id: `g${Date.now()}-${tagIdCounter.current}`, name, nodeId: msg.nodeId }]);
+            saveTags(tags);
+          }
+          setTagPendingId(null); setTagPendingName(""); break;
         case "reminders-init": {
           const now = Date.now(); const overdue = msg.reminders.filter((r: any) => now >= r.dueAt); const active = msg.reminders.filter((r: any) => now < r.dueAt);
           setReminders(active); overdue.forEach((r: any) => triggerReminder(r.id, r.title)); ensureTickLoop(); break;
@@ -42,7 +50,7 @@ export default function useApp() {
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes, setTasks, setBookmarks, setTags, setReminders, triggerReminder, ensureTickLoop, removeReminderById]);
+  }, [setNotes, setTasks, setBookmarks, setTags, tagPendingId, tagPendingName, tags, saveTags, tagIdCounter, setReminders, triggerReminder, ensureTickLoop, removeReminderById]);
 
   return {
     activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow,

@@ -122,7 +122,31 @@ figma.ui.onmessage = (msg) => {
     uiWidth = msg.width;
     uiHeight = msg.height;
     figma.ui.resize(uiWidth, uiHeight);
-  } else if (msg.type === "reminder-trigger") {
+  } else if (msg.type === "tag-create") {
+    const name = (msg.name || "").toString().trim();
+    if (!name) {
+      figma.ui.postMessage({ type: "tag-create-result", id: msg.id, nodeId: null, error: "Name is required" });
+      return;
+    }
+    (async () => {
+      try {
+        const colors = [
+          { r: 1, g: 0.96, b: 0.6 },
+          { r: 1, g: 0.82, b: 0.7 },
+          { r: 0.76, g: 0.93, b: 0.98 },
+          { r: 0.82, g: 0.94, b: 0.75 },
+          { r: 0.9, g: 0.82, b: 0.98 },
+          { r: 0.98, g: 0.87, b: 0.7 },
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const frame = await createCardFrame(name, color, `Tag: ${name}`);
+        figma.currentPage.appendChild(frame);
+        figma.viewport.scrollAndZoomIntoView([frame]);
+        figma.ui.postMessage({ type: "tag-create-result", id: msg.id, nodeId: frame.id, error: null });
+      } catch (e) {
+        figma.ui.postMessage({ type: "tag-create-result", id: msg.id, nodeId: null, error: String(e) });
+      }
+    })();  } else if (msg.type === "reminder-trigger") {
     const title = ((msg.title || "") as string).toString().trim() || "Reminder";
     const id = msg.id;
     (async () => {
