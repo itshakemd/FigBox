@@ -24,6 +24,89 @@ function computePosition() {
   return { x, y };
 }
 
+async function createCardFrame(
+  text: string,
+  color: { r: number; g: number; b: number },
+  frameName: string,
+  isReminder = false
+): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = frameName;
+  frame.resize(260, isReminder ? 180 : 160);
+  const bounds = figma.viewport.bounds;
+  frame.x = bounds.x + bounds.width / 2 - frame.width / 2;
+  frame.y = bounds.y + bounds.height / 2 - frame.height / 2;
+  frame.fills = [{ type: "SOLID", color }];
+  frame.cornerRadius = 14;
+  frame.strokeWeight = 1;
+  frame.strokes = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.12 }];
+  frame.paddingLeft = 20;
+  frame.paddingRight = 20;
+  frame.paddingTop = 18;
+  frame.paddingBottom = 18;
+  frame.layoutMode = "VERTICAL";
+  frame.primaryAxisAlignItems = "CENTER";
+  frame.counterAxisAlignItems = "CENTER";
+  frame.itemSpacing = 10;
+
+  if (isReminder) {
+    const icon = figma.createText();
+    try {
+      await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+    } catch (_) {
+      try {
+        await figma.loadFontAsync(icon.fontName as FontName);
+      } catch (__) {}
+    }
+    icon.characters = "⏰";
+    icon.fontSize = 22;
+    icon.textAlignHorizontal = "CENTER";
+    icon.textAlignVertical = "CENTER";
+    icon.fills = [{ type: "SOLID", color: { r: 0.45, g: 0.1, b: 0.1 } }];
+    icon.locked = true;
+    frame.appendChild(icon);
+  }
+
+  const title = figma.createText();
+  try {
+    await figma.loadFontAsync({ family: "Inter", style: isReminder ? "SemiBold" : "Regular" });
+  } catch (_) {
+    try {
+      await figma.loadFontAsync(title.fontName as FontName);
+    } catch (__) {}
+  }
+  title.characters = text;
+  title.fontSize = isReminder ? 18 : 20;
+  title.textAlignHorizontal = "CENTER";
+  title.textAlignVertical = "CENTER";
+  title.fills = [{ type: "SOLID", color: { r: 0.1, g: 0.1, b: 0.1 } }];
+  title.textAutoResize = "HEIGHT";
+  title.resize(frame.width - 40, title.height);
+  title.locked = true;
+  frame.appendChild(title);
+
+  if (isReminder) {
+    const sub = figma.createText();
+    try {
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+    } catch (_) {
+      try {
+        await figma.loadFontAsync(sub.fontName as FontName);
+      } catch (__) {}
+    }
+    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    sub.characters = `Reminder · ${timeStr}`;
+    sub.fontSize = 11;
+    sub.textAlignHorizontal = "CENTER";
+    sub.textAlignVertical = "CENTER";
+    sub.fills = [{ type: "SOLID", color: { r: 0.35, g: 0.15, b: 0.15 } }];
+    sub.locked = true;
+    frame.appendChild(sub);
+  }
+
+  return frame;
+}
+
 const initialPosition = computePosition();
 
 figma.showUI(uiHtml, {
@@ -39,5 +122,22 @@ figma.ui.onmessage = (msg) => {
     uiWidth = msg.width;
     uiHeight = msg.height;
     figma.ui.resize(uiWidth, uiHeight);
+  } else if (msg.type === "reminder-trigger") {
+    const title = ((msg.title || "") as string).toString().trim() || "Reminder";
+    const id = msg.id;
+    (async () => {
+      try {
+        const color = { r: 1, g: 0.76, b: 0.76 };
+        const frame = await createCardFrame(title, color, `Reminder: ${title}`, true);
+        figma.currentPage.appendChild(frame);
+        try {
+          figma.currentPage.selection = [frame];
+        } catch (_) {}
+        figma.viewport.scrollAndZoomIntoView([frame]);
+        figma.ui.postMessage({ type: "reminder-trigger-result", id, nodeId: frame.id, error: null });
+      } catch (e) {
+        figma.ui.postMessage({ type: "reminder-trigger-result", id, nodeId: null, error: String(e) });
+      }
+    })();
   }
 };

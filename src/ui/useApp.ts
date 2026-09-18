@@ -13,7 +13,7 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
-  const { reminders, reminderNow, addReminder, setReminders } = useReminders();
+  const { reminders, reminderNow, addReminder, triggerReminder, ensureTickLoop, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -21,7 +21,7 @@ export default function useApp() {
     parent.postMessage({ pluginMessage: { type: "resize", width: size.width, height: size.height } }, "*");
   }, []);
 
-  const ensureTickLoopIfAny = useCallback(() => {}, []);
+  const ensureTickLoopIfAny = useCallback(() => { if (reminders.length > 0) ensureTickLoop(); }, [reminders, ensureTickLoop]);
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -30,12 +30,16 @@ export default function useApp() {
         case "tasks-init": setTasks(msg.tasks || []); break;
         case "bookmarks-init": setBookmarks(msg.bookmarks || []); break;
         case "note-init": setNotes(normalizeNotes(msg.notes ?? msg.note)); break;
-        case "reminders-init": setReminders(msg.reminders || []); break;
+        case "reminders-init": {
+          const now = Date.now(); const overdue = msg.reminders.filter((r: any) => now >= r.dueAt); const active = msg.reminders.filter((r: any) => now < r.dueAt);
+          setReminders(active); overdue.forEach((r: any) => triggerReminder(r.id, r.title)); ensureTickLoop(); break;
+        }
+        case "reminder-trigger-result": setReminders(prev => prev.filter((r: any) => r.id !== msg.id)); break;
       }
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes, setTasks, setBookmarks, setReminders]);
+  }, [setNotes, setTasks, setBookmarks, setReminders, triggerReminder, ensureTickLoop]);
 
   return {
     activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow,
