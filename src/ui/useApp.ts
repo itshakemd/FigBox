@@ -4,6 +4,7 @@ import { useTimer } from "./useTimer";
 import { useBookmarks } from "./useBookmarks";
 import { useNotes } from "./useNotes";
 import { useTasks } from "./useTasks";
+import { useReminders } from "./useReminders";
 import { getViewSize, normalizeNotes } from "./utils";
 
 export default function useApp() {
@@ -12,12 +13,15 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
+  const { reminders, addReminder, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
     const size = getViewSize(next);
     parent.postMessage({ pluginMessage: { type: "resize", width: size.width, height: size.height } }, "*");
   }, []);
+
+  const ensureTickLoopIfAny = useCallback(() => {}, []);
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -26,17 +30,18 @@ export default function useApp() {
         case "tasks-init": setTasks(msg.tasks || []); break;
         case "bookmarks-init": setBookmarks(msg.bookmarks || []); break;
         case "note-init": setNotes(normalizeNotes(msg.notes ?? msg.note)); break;
+        case "reminders-init": setReminders(msg.reminders || []); break;
       }
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [setNotes, setTasks, setBookmarks]);
+  }, [setNotes, setTasks, setBookmarks, setReminders]);
 
   return {
-    activeView, bookmarks, notes, activeNoteId, tasks,
+    activeView, bookmarks, notes, activeNoteId, tasks, reminders,
     timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
-    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, applyView,
+    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, applyView,
     startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,
-    setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning,
+    setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning, ensureTickLoopIfAny,
   };
 }

@@ -17,4 +17,11 @@ export interface Task {
   done: boolean;
 }
 
+export interface Reminder {
+  id: string;
+  title: string;
+  durationMin: number;
+  dueAt: number;
+}
+
 export type View = 'pill' | 'apps' | 'links' | 'timer' | 'tasks' | 'note' | 'tags' | 'reminders';
