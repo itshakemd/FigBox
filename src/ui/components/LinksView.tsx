@@ -23,7 +23,9 @@ export default function LinksView({ bookmarks, onAddBookmark, onDeleteBookmark, 
       <div className="bookmark-list">
         {bookmarks.map(bookmark => (
           <div key={bookmark.id} className="bookmark-row">
-            <span className="bookmark-label">{bookmark.label}</span>
+            <a className="bookmark-link-btn" href={bookmark.url} target="_blank" rel="noopener noreferrer" title={bookmark.url}>
+              <span className="bookmark-label">{bookmark.label}</span>
+            </a>
             <button className="bookmark-delete" onClick={() => onDeleteBookmark(bookmark.id)} aria-label={"Delete " + bookmark.label} title="Delete">Delete</button>
           </div>
         ))}
