@@ -13,7 +13,7 @@ export default function useApp() {
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
   const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
-  const { reminders, addReminder, setReminders } = useReminders();
+  const { reminders, reminderNow, addReminder, setReminders } = useReminders();
 
   const applyView = useCallback((next: View) => {
     setActiveView(next);
@@ -38,7 +38,7 @@ export default function useApp() {
   }, [setNotes, setTasks, setBookmarks, setReminders]);
 
   return {
-    activeView, bookmarks, notes, activeNoteId, tasks, reminders,
+    activeView, bookmarks, notes, activeNoteId, tasks, reminders, reminderNow,
     timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
     addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addReminder, applyView,
     startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,

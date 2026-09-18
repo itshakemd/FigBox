@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 interface Reminder { id: string; title: string; durationMin: number; dueAt: number; }
-interface Props { reminders: Reminder[]; onAddReminder: (title: string, durationMin: number) => void; onBack: () => void; }
-export default function RemindersView({ reminders, onAddReminder, onBack }: Props) {
+interface Props { reminders: Reminder[]; now: number; onAddReminder: (title: string, durationMin: number) => void; onBack: () => void; }
+function formatRemain(secondsLeft: number): string { if (secondsLeft < 0) secondsLeft = 0; const m = Math.floor(secondsLeft / 60).toString().padStart(2, "0"); const s = (secondsLeft % 60).toString().padStart(2, "0"); return m + ":" + s; }
+export default function RemindersView({ reminders, now, onAddReminder, onBack }: Props) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("10");
   const titleRef = useRef<HTMLInputElement>(null);
@@ -23,12 +24,18 @@ export default function RemindersView({ reminders, onAddReminder, onBack }: Prop
         <button type="submit" className="reminder-add-confirm" aria-label="Confirm" title="Start reminder">OK</button>
       </form>
       <div className="reminder-list">
-        {reminders.map(r => (
-          <div key={r.id} className="reminder-row">
-            <span className="reminder-title">{r.title}</span>
-            <span className="reminder-meta">{r.durationMin} min</span>
-          </div>
-        ))}
+        {reminders.map(r => {
+          const remain = Math.max(0, Math.ceil((r.dueAt - now) / 1000));
+          const total = r.durationMin * 60;
+          const progress = total > 0 ? Math.max(0, Math.min(1, 1 - remain / total)) : 0;
+          return (
+            <div key={r.id} className="reminder-row">
+              <span className="reminder-title">{r.title}</span>
+              <span className="reminder-countdown">{formatRemain(remain)}</span>
+              <div className="reminder-bar"><div className="reminder-bar-fill" style={{width: progress * 100 + "%"}} /></div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
