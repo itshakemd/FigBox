@@ -15,7 +15,7 @@ const appsIcon = (
 export default function App() {
   const { activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow, timerSeconds, timerRunning, addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addTag, navigateToTag, deleteTag, addReminder, cancelReminder, applyView, startTimer, pauseTimer, resetTimer, setTimerSeconds, setTimerRunning, ensureTickLoopIfAny } = useApp();
 
-  const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : ""].filter(Boolean).join(" ");
+  const toolbarClass = ["toolbar", activeView === "apps" ? "grid-mode" : "", ["links", "tasks", "note", "tags", "reminders"].includes(activeView) ? "list-mode" : "", activeView === "timer" ? "timer-mode" : ""].filter(Boolean).join(" ");
 
   const renderView = () => {
     switch (activeView) {

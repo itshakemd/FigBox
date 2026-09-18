@@ -2,10 +2,13 @@ import type { Note, View } from "./types";
 
 export const PILL_SIZE = { width: 100, height: 40 };
 export const GRID_SIZE = { width: 170, height: 170 };
+export const APP_SIZE = { width: 340, height: 340 };
 
 export function getViewSize(view: View) {
-  if (view === "pill") return PILL_SIZE;
-  return GRID_SIZE;
+  if (view === "apps") return GRID_SIZE;
+  if (view === "links") return APP_SIZE;
+  if (["timer", "tasks", "note", "tags", "reminders"].includes(view)) return APP_SIZE;
+  return PILL_SIZE;
 }
 
 export function normalizeNotes(rawNotes: any): Note[] {
