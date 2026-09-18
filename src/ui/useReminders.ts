@@ -7,11 +7,11 @@ export function useReminders() {
 
   const saveReminders = useCallback((r: Reminder[]) => { parent.postMessage({ pluginMessage: { type: "reminders-save", reminders: r } }, "*"); }, []);
 
-  const addReminder = useCallback((rawTitle: string) => {
-    const title = (rawTitle || "").trim() || "Reminder";
+  const addReminder = useCallback((rawTitle: string, durationMin: number) => {
+    const title = (rawTitle || "").trim() || "Reminder"; if (![5, 10, 15].includes(durationMin)) return;
     reminderIdCounter.current += 1;
     const id = `r${Date.now()}-${reminderIdCounter.current}`;
-    const r: Reminder = { id, title, durationMin: 10, dueAt: Date.now() + 10 * 60 * 1000 };
+    const r: Reminder = { id, title, durationMin, dueAt: Date.now() + durationMin * 60 * 1000 };
     setReminders(prev => { const next = [...prev, r]; saveReminders(next); return next; });
   }, [saveReminders]);
 
