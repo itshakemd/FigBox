@@ -12,7 +12,7 @@ export default function useApp() {
   const [activeView, setActiveView] = useState<View>("pill");
   const timer = useTimer();
   const { bookmarks, addBookmark, deleteBookmark, setBookmarks } = useBookmarks();
-  const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, setNotes } = useNotes();
+  const { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, showNoteOnBoard, updateNoteText, setNotes } = useNotes();
   const { tasks, addTask, toggleTask, deleteTask, setTasks } = useTasks();
   const { tags, tagPendingId, tagPendingName, tagIdCounter, addTag, navigateToTag, deleteTag, saveTags, setTags, setTagPendingId, setTagPendingName } = useTags();
   const { reminders, reminderNow, addReminder, cancelReminder, triggerReminder, ensureTickLoop, removeReminderById, setReminders } = useReminders();
@@ -56,7 +56,7 @@ export default function useApp() {
   return {
     activeView, bookmarks, notes, activeNoteId, tasks, tags, reminders, reminderNow,
     timerSeconds: timer.timerSeconds, timerRunning: timer.timerRunning,
-    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, updateNoteText, addTask, toggleTask, deleteTask, addTag, navigateToTag, deleteTag, addReminder, cancelReminder, applyView,
+    addBookmark, deleteBookmark, addNote, deleteNote, openNote, showNoteList, showNoteOnBoard, updateNoteText, addTask, toggleTask, deleteTask, addTag, navigateToTag, deleteTag, addReminder, cancelReminder, applyView,
     startTimer: timer.startTimer, pauseTimer: timer.pauseTimer, resetTimer: timer.resetTimer,
     setTimerSeconds: timer.setTimerSeconds, setTimerRunning: timer.setTimerRunning, ensureTickLoopIfAny,
   };

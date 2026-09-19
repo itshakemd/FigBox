@@ -107,6 +107,50 @@ async function createCardFrame(
   return frame;
 }
 
+async function createNoteFrame(titleText: string, bodyText: string): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  const title = titleText.trim() || "Untitled note";
+  const body = bodyText.trim() || "Empty note";
+  frame.name = `Note: ${title}`;
+  frame.resize(320, 220);
+  const bounds = figma.viewport.bounds;
+  frame.x = bounds.x + bounds.width / 2 - frame.width / 2;
+  frame.y = bounds.y + bounds.height / 2 - frame.height / 2;
+  frame.fills = [{ type: "SOLID", color: { r: 1, g: 0.96, b: 0.72 } }];
+  frame.cornerRadius = 14;
+  frame.strokes = [{ type: "SOLID", color: { r: 0.55, g: 0.42, b: 0.08 }, opacity: 0.2 }];
+  frame.strokeWeight = 1;
+  frame.paddingLeft = 22;
+  frame.paddingRight = 22;
+  frame.paddingTop = 20;
+  frame.paddingBottom = 20;
+  frame.layoutMode = "VERTICAL";
+  frame.primaryAxisAlignItems = "MIN";
+  frame.counterAxisAlignItems = "MIN";
+  frame.itemSpacing = 10;
+  frame.primaryAxisSizingMode = "AUTO";
+
+  const heading = figma.createText();
+  await figma.loadFontAsync({ family: "Inter", style: "Semi Bold" });
+  heading.characters = title;
+  heading.fontSize = 18;
+  heading.fills = [{ type: "SOLID", color: { r: 0.16, g: 0.12, b: 0.03 } }];
+  heading.textAutoResize = "HEIGHT";
+  heading.resize(frame.width - 44, heading.height);
+  frame.appendChild(heading);
+
+  const content = figma.createText();
+  await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+  content.characters = body;
+  content.fontSize = 13;
+  content.lineHeight = { unit: "PIXELS", value: 20 };
+  content.fills = [{ type: "SOLID", color: { r: 0.22, g: 0.18, b: 0.08 } }];
+  content.textAutoResize = "HEIGHT";
+  content.resize(frame.width - 44, content.height);
+  frame.appendChild(content);
+
+  return frame;
+}
 const TASKS_STORAGE_KEY = "fgplus-tasks";
 const BOOKMARKS_STORAGE_KEY = "fgplus-bookmarks";
 const NOTE_STORAGE_KEY = "fgplus-note";
@@ -154,7 +198,21 @@ figma.ui.onmessage = (msg) => {
     figma.clientStorage.setAsync(BOOKMARKS_STORAGE_KEY, msg.bookmarks);
   } else if (msg.type === "note-save") {
     figma.clientStorage.setAsync(NOTE_STORAGE_KEY, msg.notes || msg.note || []);
-  } else if (msg.type === "tags-save") {
+  } else if (msg.type === "note-show") {
+    const title = ((msg.title || "") as string).toString();
+    const text = ((msg.text || "") as string).toString();
+    (async () => {
+      try {
+        const frame = await createNoteFrame(title, text);
+        figma.currentPage.appendChild(frame);
+        try {
+          figma.currentPage.selection = [frame];
+        } catch (_) {}
+        figma.viewport.scrollAndZoomIntoView([frame]);
+      } catch (e) {
+        console.error("Failed to show note on board", e);
+      }
+    })();  } else if (msg.type === "tags-save") {
     figma.clientStorage.setAsync(TAGS_STORAGE_KEY, msg.tags);
   } else if (msg.type === "reminders-save") {
     figma.clientStorage.setAsync(REMINDERS_STORAGE_KEY, msg.reminders);

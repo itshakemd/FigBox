@@ -22,6 +22,11 @@ export function useNotes() {
   }, [noteSaveTimer, getActiveNote, notes, saveNotes]);
 
   const openNote = useCallback((id: string) => { if (!notes.find(n => n.id === id)) return; setActiveNoteId(id); }, [notes]);
+  const showNoteOnBoard = useCallback((id: string) => {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    parent.postMessage({ pluginMessage: { type: "note-show", title: note.title, text: note.text } }, "*");
+  }, [notes]);
   const showNoteList = useCallback(() => { flushNoteSave(); setActiveNoteId(null); }, [flushNoteSave]);
 
   const addNote = useCallback(() => {
@@ -42,5 +47,5 @@ export function useNotes() {
     setNoteSaveTimer(id);
   }, [activeNoteId, noteSaveTimer, notes, saveNotes]);
 
-  return { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, updateNoteText, saveNotes, setNotes };
+  return { notes, activeNoteId, addNote, deleteNote, openNote, showNoteList, showNoteOnBoard, updateNoteText, saveNotes, setNotes };
 }
