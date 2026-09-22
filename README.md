@@ -1,4 +1,4 @@
-# FigBox
+# FigBox 
 
 FigBox is a lightweight productivity companion for Figma and FigJam. It gives you a focused set of tools for capturing references, organizing ideas, planning tasks, setting reminders, and staying focused without leaving your design environment.
 
@@ -53,4 +53,4 @@ npm run dev
 
 ## Privacy
 
-FigBox does not require network access. Your saved content is kept locally by the plugin and links open only when you choose to visit them.
+FigBox does not require network access. Your saved content is kept locally by the plugin and links open only when you choose to visit them
